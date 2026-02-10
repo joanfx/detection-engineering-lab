@@ -30,11 +30,11 @@ The rule utilizes PCRE2 regex to identify the `MiniDump` function call within `c
 
 ```json
 {
-  "timestamp": "2026-02-10T18:15:37.855+0000",
+  "timestamp": "2026-02-10T13:53:59.343-0500",
   "rule": {
     "level": 12,
     "description": "Credential Dumping detected via comsvcs.dll",
-    "id": "100002",
+    "id": "100001",
     "mitre": {
       "id": ["T1003.001"],
       "tactic": ["Credential Access"],
@@ -52,6 +52,7 @@ The rule utilizes PCRE2 regex to identify the `MiniDump` function call within `c
         "image": "C:\\\\Windows\\\\System32\\\\rundll32.exe",
         "commandLine": "\"C:\\\\WINDOWS\\\\system32\\\\rundll32.exe\" C:\\\\windows\\\\System32\\\\comsvcs.dll MiniDump 792 C:\\\\Users\\\\labuser\\\\AppData\\\\Local\\\\Temp\\\\lsass.dmp full",
         "originalFileName": "RUNDLL32.EXE",
+        "processId": "6904",
         "user": "DESKTOP-G08D067\\\\labuser"
       }
     }

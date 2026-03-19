@@ -1,4 +1,4 @@
-# Detection Engineering & Threat Hunting Lab
+# Detection Engineering Lab
 
 ### Overview
 This repository is a live security operations and detection engineering portfolio. The purpose of this lab is to emulate specific MITRE ATT&CK techniques, generate high-fidelity adversarial telemetry, and engineer custom detection logic from bare metal to SIEM alert.

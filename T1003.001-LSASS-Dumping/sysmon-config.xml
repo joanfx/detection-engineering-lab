@@ -1,8 +1,0 @@
-<Sysmon schemaversion="4.50">
-  <HashAlgorithms>sha256</HashAlgorithms>
-  <EventFiltering>
-    
-    <ProcessCreate onmatch="exclude"/>
-
-  </EventFiltering>
-</Sysmon>

@@ -12,14 +12,12 @@ references:
   - https://attack.mitre.org/techniques/T1027/
 logsource:
   product: windows
-  service: sysmon
   category: process_creation
 detection:
   selection:
-    EventID: 1
     Image|endswith:
-      - '\powershell.exe'
-      - '\pwsh.exe'
+      - '\\powershell.exe'
+      - '\\pwsh.exe'
     CommandLine|contains:
       - ' -EncodedCommand '
       - ' -enc '
@@ -30,7 +28,7 @@ level: high
 tags:
   - attack.execution
   - attack.t1059.001
-  - attack.defense_evasion
+  - attack.defense-evasion
   - attack.t1027
 falsepositives:
   - Legitimate administrative scripts used for system management (e.g., SCCM, Intune, or software installers).

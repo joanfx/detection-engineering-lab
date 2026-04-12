@@ -25,8 +25,8 @@ jobs:
 
       - name: 1. Validate Sigma Syntax
         run: |
-          # It scans every folder for .yml files
-          sigma check .
+          # It scans every folder for .yml files, excluding the .github workflow directory
+          find . -name '*.yml' -not -path './.github/*' | xargs sigma check
 
       - name: 2. Generate Splunk SPL
         run: |

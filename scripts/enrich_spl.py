@@ -85,8 +85,6 @@ def main() -> None:
     technique_str = ", ".join(techniques) if techniques else "Unknown"
 
     # ── Build enriched SPL ────────────────────────────────────────────────────
-    # The enrichment pipe template is injected from a GitHub Secret so it stays
-    # hidden from anyone reading the public sigma_val.yml workflow file.
     enrichment_template = os.environ.get("SPL_ENRICHMENT_PIPES", "").strip()
 
     if not enrichment_template:

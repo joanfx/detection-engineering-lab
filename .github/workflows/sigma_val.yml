@@ -30,7 +30,6 @@ jobs:
 
       - name: 2. Generate Splunk SPL (The Flex)
         run: |
-          # This is the "I'm a detection engineer" step.
-          # What it does is it takes your sigma rules and converts them to splunk queries
+          # It takes your sigma rules and converts them to splunk queries
           # Use '-t splunk' for standard SPL.
           sigma convert -t splunk -p sysmon .

@@ -1,0 +1,36 @@
+name: Sigma Validation Pipeline - joanfx
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  detection-engineering:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Sigma-CLI
+        run: |
+          pip install sigma-cli
+
+      - name: 1. Validate Sigma Syntax
+        run: |
+          # This scans every folder (LSASS, PowerShell, etc.) for .yml files
+          sigma check --recursive .
+
+      - name: 2. Generate Splunk SPL (The Flex)
+        run: |
+          # This is the "I'm a detection engineer" step.
+          # What it does is it takes your sigma rules and converts them to splunk queries
+          # Use '-t splunk' for standard SPL.
+          sigma convert -t splunk -p sysmon .

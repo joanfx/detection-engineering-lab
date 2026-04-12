@@ -21,7 +21,7 @@ jobs:
 
       - name: Install Sigma-CLI
         run: |
-          pip install sigma-cli
+          pip install sigma-cli pySigma-backend-splunk pySigma-pipeline-sysmon
 
       - name: 1. Validate Sigma Syntax
         run: |
@@ -31,4 +31,4 @@ jobs:
       - name: 2. Generate Splunk SPL
         run: |
           # It takes your sigma rules and converts them to splunk queries
-          sigma convert -t splunk -p sysmon .
+          find . -name '*.yml' -not -path './.github/*' | xargs sigma convert -t splunk -p sysmon

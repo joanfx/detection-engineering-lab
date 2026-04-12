@@ -25,11 +25,10 @@ jobs:
 
       - name: 1. Validate Sigma Syntax
         run: |
-          # This scans every folder (LSASS, PowerShell, etc.) for .yml files
-          sigma check --recursive .
+          # It scans every folder for .yml files
+          sigma check .
 
-      - name: 2. Generate Splunk SPL (The Flex)
+      - name: 2. Generate Splunk SPL
         run: |
           # It takes your sigma rules and converts them to splunk queries
-          # Use '-t splunk' for standard SPL.
           sigma convert -t splunk -p sysmon .

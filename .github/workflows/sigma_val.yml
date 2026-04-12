@@ -21,7 +21,7 @@ jobs:
 
       - name: Install Sigma-CLI
         run: |
-          pip install sigma-cli pySigma-backend-splunk pySigma-pipeline-sysmon
+          pip install sigma-cli pySigma-backend-splunk pySigma-pipeline-sysmon pyyaml
 
       - name: 1. Validate Sigma Syntax
         run: |
@@ -29,6 +29,21 @@ jobs:
           find . -name '*.yml' -not -path './.github/*' | xargs sigma check
 
       - name: 2. Generate Splunk SPL
+        env:
+          # Enrichment pipe template stored as a GitHub Secret — hidden from this file
+          SPL_ENRICHMENT_PIPES: ${{ secrets.SPL_ENRICHMENT_PIPES }}
         run: |
-          # It takes your sigma rules and converts them to splunk queries
-          find . -name '*.yml' -not -path './.github/*' | xargs sigma convert -t splunk -p sysmon
+          # Convert each Sigma rule individually, then enrich with MITRE context
+          mkdir -p spl_output
+          while IFS= read -r rule; do
+            echo ">>> Processing: $rule"
+            spl=$(sigma convert -t splunk -p sysmon "$rule" 2>/dev/null) || { echo "Skipping $rule (convert failed)"; continue; }
+            python3 scripts/enrich_spl.py "$rule" "$spl"
+          done < <(find . -name '*.yml' -not -path './.github/*')
+
+      - name: Upload Enriched SPL Queries
+        uses: actions/upload-artifact@v4
+        with:
+          name: splunk-spl-queries
+          path: spl_output/
+          retention-days: 30

@@ -1,0 +1,27 @@
+# ============================================================
+# detection-engineering-adversarial-emulation — .gitignore
+# ============================================================
+
+# ----- Pipeline runtime outputs (never commit to public repo) -----
+
+# Generated enriched SPL query files produced by the CI pipeline
+/spl_output/
+
+# Local clone of the private detection-outputs vault (used by CI)
+/vault/
+
+# ----- Python -----
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# ----- OS & editor noise -----
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/

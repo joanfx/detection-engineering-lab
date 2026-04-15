@@ -25,14 +25,12 @@ jobs:
 
       - name: 1. Validate Sigma Syntax
         run: |
-          # It scans every folder for .yml files, excluding the .github workflow directory
           find . -name '*.yml' -not -path './.github/*' | xargs sigma check
 
       - name: 2. Generate Splunk SPL
         env:
           SPL_ENRICHMENT_PIPES: ${{ secrets.SPL_ENRICHMENT_PIPES }}
         run: |
-          # Convert each Sigma rule individually, then enrich with MITRE context
           mkdir -p spl_output
           while IFS= read -r rule; do
             echo ">>> Processing: $rule"
@@ -40,44 +38,20 @@ jobs:
             python3 scripts/enrich_spl.py "$rule" "$spl"
           done < <(find . -name '*.yml' -not -path './.github/*')
 
-      - name: Upload Enriched SPL Queries so it's structured with MITRE ATT&CK context.
+      - name: Push Enriched SPL to Private Vault
         env:
-          GIST_TOKEN: ${{ secrets.GIST_TOKEN }}
+          VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
         run: |
-          python3 - <<'EOF'
-          import os, json, urllib.request, pathlib, datetime
-
-          token = os.environ["GIST_TOKEN"]
-          spl_dir = pathlib.Path("spl_output")
-          files = {}
-
-          for f in sorted(spl_dir.glob("*.txt")):
-              files[f.name] = {"content": f.read_text(encoding="utf-8")}
-
-          if not files:
-              print("No SPL files found — skipping gist upload.")
-              exit(0)
-
-          payload = json.dumps({
-              "description": f"[PRIVATE] Enriched SPL Queries — {datetime.date.today()}",
-              "public": False,   # <-- private gist
-              "files": files
-          }).encode()
-
-          req = urllib.request.Request(
-              "https://api.github.com/gists",
-              data=payload,
-              headers={
-                  "Authorization": f"token {token}",
-                  "Accept": "application/vnd.github+json",
-                  "Content-Type": "application/json",
-              },
-              method="POST"
-          )
-          with urllib.request.urlopen(req) as resp:
-              data = json.loads(resp.read())
-
-          print("Private Gist created")
-          print(f"   {data['html_url']}")
-          print(f"   Files: {list(files.keys())}")
-          EOF
+          git clone https://oauth2:${VAULT_TOKEN}@github.com/${{ github.repository_owner }}/detection-outputs.git vault
+          cp spl_output/*.txt vault/
+          cd vault
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add *.txt
+          if git diff --staged --quiet; then
+            echo "No changes detected — vault is already up to date."
+          else
+            git commit -m "chore: automated SPL update from detection-engineering pipeline"
+            git push
+            echo "SPL queries pushed to private vault successfully."
+          fi

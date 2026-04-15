@@ -19,7 +19,7 @@ import sys
 import yaml
 from pathlib import Path
 
-# Maps ATT&CK tactic slugs (from Sigma tags) to human-readable names
+# Maps ATT&CK tactics (from Sigma tags) to human-readable names
 TACTIC_MAP = {
     "initial-access":       "Initial Access",
     "execution":            "Execution",
@@ -88,7 +88,7 @@ def main() -> None:
     enrichment_template = os.environ.get("SPL_ENRICHMENT_PIPES", "").strip()
 
     if not enrichment_template:
-        print(f"[WARN] SPL_ENRICHMENT_PIPES secret is not set. Saving base SPL only for: {rule_path.name}")
+        print(f"[WARN] SPL_ENRICHMENT_PIPES secret is not set — saving base SPL only for: {rule_path.name}")
         enriched_spl = base_spl
     else:
         filled_pipes = (
@@ -106,15 +106,7 @@ def main() -> None:
     output_file = output_dir / f"{rule_path.stem}.txt"
     output_file.write_text(enriched_spl, encoding="utf-8")
 
-    print(f"\n{'='*60}")
-    print(f"Rule       : {title}")
-    print(f"Severity   : {level}")
-    print(f"Tactics    : {tactic_str}")
-    print(f"Techniques : {technique_str}")
-    print(f"Output     : {output_file}")
-    print(f"{'='*60}\n")
-    print("=== Enriched SPL Query ===")
-    print(enriched_spl)
+    print(f">>> Successfully enriched: {rule_path.stem}")
 
 
 if __name__ == "__main__":

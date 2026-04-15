@@ -33,9 +33,8 @@ jobs:
         run: |
           mkdir -p spl_output
           while IFS= read -r rule; do
-            echo ">>> Processing: $rule"
             spl=$(sigma convert -t splunk -p sysmon "$rule" 2>/dev/null) || { echo "Skipping $rule (convert failed)"; continue; }
-            python3 scripts/enrich_spl.py "$rule" "$spl"
+            python3 scripts/enrich_spl.py "$rule" "$spl" 2>/dev/null
           done < <(find . -name '*.yml' -not -path './.github/*')
 
       - name: Push Enriched SPL to Private Vault
